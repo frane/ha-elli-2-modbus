@@ -11,40 +11,29 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, CONF_SCAN_INTER
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.exceptions import ServiceValidationError
 
-from custom_components.elli_2_modbus.const import (
-    CONF_CONNECTION,
-    CONF_UNIT_ID,
-    CONNECTION_MODBUS,
-    DOMAIN,
-)
-
-
-async def _modbus_form(hass):
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
-    assert result["type"] is FlowResultType.MENU
-    return await hass.config_entries.flow.async_configure(
-        result["flow_id"], {"next_step_id": "modbus"}
-    )
+from custom_components.elli_2_modbus.const import CONF_UNIT_ID, DOMAIN
 
 
 # --- Config flow -----------------------------------------------------------
 
 
 async def test_config_flow_success(hass, entry_data):
-    result = await _modbus_form(hass)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
     assert result["type"] is FlowResultType.FORM
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_NAME: "Garage", **entry_data}
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == "Garage"
-    assert result["data"] == {CONF_CONNECTION: CONNECTION_MODBUS, **entry_data}
+    assert result["data"] == entry_data
     await hass.async_block_till_done()
 
     # second time: already configured
-    result = await _modbus_form(hass)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_NAME: "Garage", **entry_data}
     )
@@ -59,7 +48,9 @@ async def test_config_flow_cannot_connect(hass, socket_enabled):
     s.bind(("127.0.0.1", 0))
     port = s.getsockname()[1]
     s.close()
-    result = await _modbus_form(hass)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {CONF_NAME: "x", CONF_HOST: "127.0.0.1", CONF_PORT: port, CONF_UNIT_ID: 1},

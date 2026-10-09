@@ -12,8 +12,7 @@ from custom_components.elli_2_modbus.const import CONF_UNIT_ID, DOMAIN
 
 
 @pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations, mock_async_zeroconf):
-    # the integration depends on zeroconf (EEBUS discovery); never use the real one in tests
+def auto_enable_custom_integrations(enable_custom_integrations):
     yield
 
 

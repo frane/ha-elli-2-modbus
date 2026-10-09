@@ -18,13 +18,3 @@ CONF_UNIT_ID: Final = "unit_id"
 MANUFACTURER: Final = "Elli"
 MODEL: Final = "Charger 2"
 WATCHDOG_MAX_SECONDS: Final = 65
-
-# EEBUS
-CONF_CONNECTION: Final = "connection"
-CONNECTION_MODBUS: Final = "modbus"
-CONNECTION_EEBUS: Final = "eebus"
-CONF_SKI: Final = "ski"
-DEFAULT_EEBUS_PORT: Final = 4711
-EEBUS_NAME: Final = "home-assistant"  # how we appear in the wallbox's list of EEBUS devices
-EEBUS_PAIR_TIMEOUT: Final = 30  # s to wait for the wallbox after the user paired
-EEBUS_SETUP_WAIT: Final = 15  # s to wait for the first data when the entry is set up

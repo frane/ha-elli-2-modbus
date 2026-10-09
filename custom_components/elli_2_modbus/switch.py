@@ -9,7 +9,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import ElliConfigEntry, ElliCoordinator
-from .eebus import EebusCoordinator, EebusEntity
 from .entity import ElliEntity
 
 
@@ -18,9 +17,6 @@ async def async_setup_entry(
     entry: ElliConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    if isinstance(entry.runtime_data, EebusCoordinator):
-        async_add_entities([PowerLimitSwitch(entry.runtime_data)])
-        return
     async_add_entities([ChargingSwitch(entry.runtime_data)])
 
 
@@ -41,22 +37,3 @@ class ChargingSwitch(ElliEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_charging(False)
-
-
-class PowerLimitSwitch(EebusEntity, SwitchEntity):
-    """On: the wallbox charges with at most the power limit. Off: no limit."""
-
-    _attr_icon = "mdi:speedometer"
-
-    def __init__(self, coordinator: EebusCoordinator) -> None:
-        super().__init__(coordinator, "power_limit_active")
-
-    @property
-    def is_on(self) -> bool:
-        return self.coordinator.limit_active
-
-    async def async_turn_on(self, **kwargs: Any) -> None:
-        await self.coordinator.async_set_limit_active(True)
-
-    async def async_turn_off(self, **kwargs: Any) -> None:
-        await self.coordinator.async_set_limit_active(False)

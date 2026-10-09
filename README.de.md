@@ -1,20 +1,13 @@
-# Elli Charger (Modbus, EEBUS) für Home Assistant
+# Elli Charger 2 (Modbus) für Home Assistant
 
 [English](README.md) | **Deutsch**
 
-Lokale Home-Assistant-Integration für **Elli**-Wallboxen über **Modbus TCP** oder **EEBUS**. Ohne Cloud, und die Elli-App funktioniert weiter.
+Lokale Home-Assistant-Integration für **Elli Charger 2** Wallboxen über **Modbus TCP**. Ohne Cloud, ohne EEBUS, und die Elli-App funktioniert weiter.
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://hacs.xyz/)
 [![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=frane&repository=ha-elli-2-modbus&category=integration)
 
-Der Protokoll-Code steckt in den Bibliotheken [elli-2-modbus](https://github.com/frane/elli-2-modbus) und [elli-eebus](https://github.com/frane/elli-eebus) (auf Basis von [pyeebus](https://github.com/frane/pyeebus)). Home Assistant installiert sie automatisch.
-
-| | Modbus TCP | EEBUS |
-|---|---|---|
-| Wallboxen | Elli Charger 2 | Elli Charger 2, erste Generation (ungetestet) |
-| Steuerung | Ladestrom 6–16 A, an/aus | Ladeleistungslimit (W) |
-| Werte | Zustand, Leistung, Energie, Ströme, Spannungen, Temperatur | Leistung (Elli Charger 2); Fahrzeugwerte (erste Generation) |
-| Empfohlen | **ja**, für die Elli Charger 2 | wenn Modbus nicht geht, oder für die erste Generation |
+Der Modbus-Code steckt in der Bibliothek [elli-2-modbus](https://github.com/frane/elli-2-modbus). Home Assistant installiert sie automatisch.
 
 ## Unterstützte Wallboxen
 
@@ -25,7 +18,7 @@ Elli-Wallboxen der zweiten Generation mit Firmware **R03.004.045.121-elli oder n
 - Škoda Charger Connect 2 / Pro 2
 - CUPRA Charger 2 / Pro 2
 
-Wallboxen der ersten Generation haben keinen Modbus-Server; für sie gibt es EEBUS.
+Wallboxen der ersten Generation haben keinen Modbus-Server.
 
 **Warum Modbus?** Seit Firmware R03 ist die EEBUS-Anbindung an mehrere Energiemanager (z. B. Solar Manager und evcc) defekt. Ellis eigene HEMS-Whitelist führt Solar Manager nur „bis Software R04.004.041.009“. Modbus TCP ist die dokumentierte Alternative. Es läuft lokal und parallel zum Elli-Backend.
 
@@ -53,7 +46,7 @@ Optionaler Test von einem beliebigen Rechner: `pip install elli-2-modbus && elli
 
 1. In Home Assistant **HACS** öffnen → **⋮ (oben rechts) → Benutzerdefinierte Repositories**. Alternativ den Button „In HACS öffnen“ oben nutzen.
 2. Repository: `https://github.com/frane/ha-elli-2-modbus`, Typ: **Integration** → **Hinzufügen**.
-3. In HACS nach **Elli Charger (Modbus, EEBUS)** suchen → **Herunterladen**.
+3. In HACS nach **Elli Charger 2 (Modbus)** suchen → **Herunterladen**.
 4. **Home Assistant neu starten** (*Einstellungen → System → Neu starten*).
 
 <details><summary>Ohne HACS</summary>
@@ -63,7 +56,7 @@ Den Ordner `custom_components/elli_2_modbus` in den Ordner `custom_components` d
 
 ### Schritt 3: Wallbox hinzufügen
 
-1. *Einstellungen → Geräte & Dienste → Integration hinzufügen →* **Elli Charger (Modbus, EEBUS)** → **Modbus TCP**.
+1. *Einstellungen → Geräte & Dienste → Integration hinzufügen →* **Elli Charger 2 (Modbus)**.
 2. Name, **IP-Adresse** der Wallbox, Port `502` und Modbus-ID `1` eintragen.
 3. Fertig. Die Wallbox erscheint als Gerät mit den Entitäten unten.
 
@@ -78,19 +71,7 @@ Im Gerät den **Failsafe-Strom** setzen. Diesen Strom nutzt die Wallbox, wenn Ho
 
 Das Abfrageintervall deutlich kürzer als den Watchdog-Timeout halten.
 
-### EEBUS statt Modbus
-
-Schritt 1 und 4 entfallen, Schritt 2 ist gleich.
-
-1. Home Assistant findet die Wallbox im Netz und bietet sie unter *Einstellungen → Geräte & Dienste* (*Entdeckt*) an. Sonst: *Integration hinzufügen →* **Elli Charger (Modbus, EEBUS)** → **EEBUS**, und IP-Adresse, Port `4711` und die SKI der Wallbox eintragen (steht in der Weboberfläche bei den EEBUS-Einstellungen).
-2. Home Assistant zeigt seine eigene SKI. In der Weboberfläche der Wallbox **EEBUS-Energiemanager** öffnen (*Connections → HEMS connection*), unter **Gefundene EEBUS-Geräte** „home-assistant“ auswählen und koppeln.
-3. In Home Assistant auf **Absenden** klicken. Die Wallbox verbindet sich innerhalb weniger Sekunden.
-
-EEBUS-Entitäten: *Ladeleistungslimit* (Zahl, W) und *Leistungslimit* (Schalter, an = Limit gilt), *Ladeleistung*, *Aktives Leistungslimit*, *Betriebszustand*, *Problem*, *EEBUS verbunden*, sowie *Failsafe-Leistung* / *Failsafe-Dauer* (was die Wallbox tut, wenn Home Assistant weg ist; Standard 22 kW = kein Limit). Wallboxen der ersten Generation melden zusätzlich Fahrzeug, Ströme und die Energie des Ladevorgangs.
-
-Bekannte Firmware-Fehler der Elli (Limits mit Dauer werden ignoriert, Aufheben geht nur mit 0 W) fängt [elli-eebus](https://github.com/frane/elli-eebus/blob/main/README.de.md#firmware-fehler-der-elli-und-wie-elli-eebus-damit-umgeht) ab.
-
-## Entitäten (Modbus)
+## Entitäten
 
 | Entität | Typ |
 |---|---|
@@ -123,7 +104,7 @@ Für PV-Überschussladen eine Automation schreiben, die *Ladestrom* und *Laden f
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements_test.txt   # oder: pip install -e ../elli-2-modbus -e ../pyeebus -e ../elli-eebus
+pip install -r requirements_test.txt   # oder: pip install -e ../elli-2-modbus
 pytest
 ```
 

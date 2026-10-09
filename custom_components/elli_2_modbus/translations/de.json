@@ -2,14 +2,6 @@
   "config": {
     "step": {
       "user": {
-        "title": "Elli Charger",
-        "description": "Wie soll Home Assistant mit der Wallbox sprechen?",
-        "menu_options": {
-          "modbus": "Modbus TCP (Elli Charger 2, empfohlen: alle Werte)",
-          "eebus": "EEBUS (Leistungslimit; Elli Charger 2 und erste Generation)"
-        }
-      },
-      "modbus": {
         "title": "Elli Charger 2 (Modbus TCP)",
         "description": "Zuerst in der Wallbox-Konfiguration unter „Verbindungen > Modbus-Server“ den Modbus-Server aktivieren (Firmware ab R03.004.045.121).",
         "data": {
@@ -24,32 +16,6 @@
           "unit_id": "Standard: 1"
         }
       },
-      "eebus": {
-        "title": "Elli Charger (EEBUS)",
-        "description": "Die SKI steht in der Weboberfläche der Wallbox bei den EEBUS-Einstellungen. Wird die Wallbox automatisch gefunden, ist sie schon eingetragen.",
-        "data": {
-          "name": "Name",
-          "host": "Host",
-          "port": "Port",
-          "ski": "SKI der Wallbox"
-        },
-        "data_description": {
-          "host": "IP-Adresse oder Hostname der Wallbox",
-          "port": "Standard: 4711",
-          "ski": "40 Hexadezimalzeichen"
-        }
-      },
-      "zeroconf_confirm": {
-        "title": "Elli Charger (EEBUS)",
-        "description": "EEBUS-Wallbox unter {host} hinzufügen?",
-        "data": {
-          "name": "Name"
-        }
-      },
-      "pair": {
-        "title": "Mit der Wallbox koppeln",
-        "description": "In der Weboberfläche der Wallbox ({host}) „EEBUS-Energiemanager“ öffnen. Unter „Gefundene EEBUS-Geräte“ **{our_name}** (SKI {our_ski}) auswählen und koppeln. Danach auf Absenden drücken."
-      },
       "reconfigure": {
         "title": "Verbindung ändern",
         "data": {
@@ -61,23 +27,18 @@
           "host": "IP-Adresse oder Hostname der Wallbox",
           "port": "Standard: 502",
           "unit_id": "Standard: 1"
-        },
-        "description": "Bei EEBUS lassen sich nur Host und Port ändern."
+        }
       }
     },
     "error": {
       "cannot_connect": "Keine Verbindung. Ist der Modbus-Server in der Wallbox aktiviert und die Adresse richtig?",
       "modbus_error": "Die Wallbox antwortet, aber nicht mit den erwarteten Registern. Firmware zu alt oder falsche Modbus-ID?",
-      "unknown": "Unerwarteter Fehler",
-      "invalid_ski": "Die SKI muss aus 40 Hexadezimalzeichen bestehen.",
-      "not_paired": "Die Wallbox hat die Verbindung noch nicht angenommen. Gekoppelt? Dann nochmal versuchen."
+      "unknown": "Unerwarteter Fehler"
     },
     "abort": {
       "already_configured": "Diese Wallbox ist bereits eingerichtet.",
-      "reconfigure_successful": "Verbindung aktualisiert.",
-      "not_supported": "Dieses EEBUS-Gerät wird nicht unterstützt."
-    },
-    "flow_title": "{name}"
+      "reconfigure_successful": "Verbindung aktualisiert."
+    }
   },
   "options": {
     "step": {
@@ -101,9 +62,6 @@
       },
       "problem": {
         "name": "Störung"
-      },
-      "connected": {
-        "name": "EEBUS verbunden"
       }
     },
     "number": {
@@ -115,15 +73,6 @@
       },
       "watchdog_timeout": {
         "name": "Watchdog-Timeout"
-      },
-      "power_limit": {
-        "name": "Ladeleistungslimit"
-      },
-      "failsafe_power": {
-        "name": "Failsafe-Leistung"
-      },
-      "failsafe_duration": {
-        "name": "Failsafe-Dauer"
       }
     },
     "sensor": {
@@ -175,26 +124,11 @@
       },
       "pcb_temperature": {
         "name": "Platinentemperatur"
-      },
-      "active_power_limit": {
-        "name": "Aktives Leistungslimit"
-      },
-      "operating_state": {
-        "name": "Betriebszustand"
-      },
-      "energy": {
-        "name": "Energie"
-      },
-      "charge_state": {
-        "name": "Ladezustand"
       }
     },
     "switch": {
       "charging_enabled": {
         "name": "Laden freigegeben"
-      },
-      "power_limit_active": {
-        "name": "Leistungslimit"
       }
     }
   },

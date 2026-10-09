@@ -1,20 +1,13 @@
-# Elli Charger (Modbus, EEBUS) for Home Assistant
+# Elli Charger 2 (Modbus) for Home Assistant
 
 **English** | [Deutsch](README.de.md)
 
-Local Home Assistant integration for **Elli** wallboxes over **Modbus TCP** or **EEBUS**. No cloud, and the Elli app keeps working.
+Local Home Assistant integration for **Elli Charger 2** wallboxes over **Modbus TCP**. No cloud, no EEBUS, and the Elli app keeps working.
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://hacs.xyz/)
 [![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=frane&repository=ha-elli-2-modbus&category=integration)
 
-The protocol code lives in the libraries [elli-2-modbus](https://github.com/frane/elli-2-modbus) and [elli-eebus](https://github.com/frane/elli-eebus) (on [pyeebus](https://github.com/frane/pyeebus)). Home Assistant installs them automatically.
-
-| | Modbus TCP | EEBUS |
-|---|---|---|
-| Wallboxes | Elli Charger 2 | Elli Charger 2, first generation (untested) |
-| Control | charging current 6–16 A, on/off | charging power limit (W) |
-| Values | state, power, energy, currents, voltages, temperature | power (Elli Charger 2); EV values (first generation) |
-| Recommended | **yes**, for the Elli Charger 2 | if Modbus is not available, or for the first generation |
+The Modbus code lives in the library [elli-2-modbus](https://github.com/frane/elli-2-modbus). Home Assistant installs it automatically.
 
 ## Supported wallboxes
 
@@ -25,7 +18,7 @@ Second-generation Elli wallboxes with firmware **R03.004.045.121-elli or newer**
 - Škoda Charger Connect 2 / Pro 2
 - CUPRA Charger 2 / Pro 2
 
-First-generation chargers have no Modbus server; use EEBUS for them.
+First-generation chargers have no Modbus server.
 
 **Why Modbus?** Since firmware R03, the EEBUS connection to several energy managers (for example Solar Manager and evcc) has been broken. Elli's own HEMS whitelist lists Solar Manager only "up to software R04.004.041.009". Modbus TCP is the documented alternative. It runs locally and alongside the Elli backend.
 
@@ -53,7 +46,7 @@ Optional check from any computer: `pip install elli-2-modbus && elli-2-modbus st
 
 1. In Home Assistant, open **HACS** and click **⋮ (top right) → Custom repositories**. You can also use the "Open in HACS" button above.
 2. Repository: `https://github.com/frane/ha-elli-2-modbus`, Type: **Integration** → **Add**.
-3. Search for **Elli Charger (Modbus, EEBUS)** in HACS → **Download**.
+3. Search for **Elli Charger 2 (Modbus)** in HACS → **Download**.
 4. **Restart Home Assistant** (*Settings → System → Restart*).
 
 <details><summary>Without HACS</summary>
@@ -63,7 +56,7 @@ Copy `custom_components/elli_2_modbus` into the `custom_components` folder of yo
 
 ### Step 3: Add the wallbox
 
-1. *Settings → Devices & services → Add integration →* **Elli Charger (Modbus, EEBUS)** → **Modbus TCP**.
+1. *Settings → Devices & services → Add integration →* **Elli Charger 2 (Modbus)**.
 2. Enter a name, the **IP address** of the wallbox, port `502` and Modbus ID `1`.
 3. Done. The wallbox shows up as a device with the entities below.
 
@@ -78,19 +71,7 @@ Open the device and set **Failsafe current**. This is what the wallbox does when
 
 Keep the polling interval well below the watchdog timeout.
 
-### EEBUS instead of Modbus
-
-Steps 1 and 4 are not needed. Step 2 is the same.
-
-1. Home Assistant finds the wallbox on the network and offers it under *Settings → Devices & services* (*Discovered*). Otherwise: *Add integration →* **Elli Charger (Modbus, EEBUS)** → **EEBUS**, and enter the IP address, port `4711` and the wallbox's SKI (shown in its web interface under the EEBUS settings).
-2. Home Assistant shows its own SKI. In the wallbox web interface, open **Connections → HEMS connection** (*EEBUS-Energiemanager*), select **home-assistant** under **Found EEBUS devices** and pair.
-3. Click **Submit** in Home Assistant. The wallbox connects within a few seconds.
-
-EEBUS entities: *Charging power limit* (number, W) and *Power limit* (switch, on = limit applies), *Charging power*, *Active power limit*, *Operating state*, *Problem*, *EEBUS connected*, and *Failsafe power* / *Failsafe duration* (what the wallbox does when Home Assistant is gone, default 22 kW = no limit). First-generation wallboxes also report the vehicle, currents and the energy of the session.
-
-Known Elli firmware bugs (limits with a duration are ignored, lifting a limit only works with 0 W) are handled by [elli-eebus](https://github.com/frane/elli-eebus#elli-firmware-bugs-and-how-elli-eebus-handles-them).
-
-## Entities (Modbus)
+## Entities
 
 | Entity | Type |
 |---|---|
@@ -123,7 +104,7 @@ For PV surplus charging, write an automation that sets *Charging current* and *C
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements_test.txt   # or: pip install -e ../elli-2-modbus -e ../pyeebus -e ../elli-eebus
+pip install -r requirements_test.txt   # or: pip install -e ../elli-2-modbus
 pytest
 ```
 

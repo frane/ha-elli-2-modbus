@@ -2,14 +2,6 @@
   "config": {
     "step": {
       "user": {
-        "title": "Elli Charger",
-        "description": "How should Home Assistant talk to the wallbox?",
-        "menu_options": {
-          "modbus": "Modbus TCP (Elli Charger 2, recommended: all values)",
-          "eebus": "EEBUS (power limit; Elli Charger 2 and first generation)"
-        }
-      },
-      "modbus": {
         "title": "Elli Charger 2 (Modbus TCP)",
         "description": "First enable the Modbus server in the wallbox configuration under \"Connections > Modbus server\" (firmware R03.004.045.121 or later).",
         "data": {
@@ -24,32 +16,6 @@
           "unit_id": "Default: 1"
         }
       },
-      "eebus": {
-        "title": "Elli Charger (EEBUS)",
-        "description": "The SKI is shown in the wallbox web UI under the EEBUS settings, or found automatically if the wallbox is discovered.",
-        "data": {
-          "name": "Name",
-          "host": "Host",
-          "port": "Port",
-          "ski": "SKI of the wallbox"
-        },
-        "data_description": {
-          "host": "IP address or hostname of the wallbox",
-          "port": "Default: 4711",
-          "ski": "40 hexadecimal characters"
-        }
-      },
-      "zeroconf_confirm": {
-        "title": "Elli Charger (EEBUS)",
-        "description": "Add the EEBUS wallbox at {host}?",
-        "data": {
-          "name": "Name"
-        }
-      },
-      "pair": {
-        "title": "Pair with the wallbox",
-        "description": "In the wallbox web UI ({host}), open the EEBUS settings (Connections > HEMS connection). Under \"Found EEBUS devices\", select **{our_name}** (SKI {our_ski}) and pair. Then press Submit."
-      },
       "reconfigure": {
         "title": "Change connection",
         "data": {
@@ -61,23 +27,18 @@
           "host": "IP address or hostname of the wallbox",
           "port": "Default: 502",
           "unit_id": "Default: 1"
-        },
-        "description": "For EEBUS only host and port can be changed."
+        }
       }
     },
     "error": {
       "cannot_connect": "Cannot connect. Is the Modbus server enabled in the wallbox and the address correct?",
       "modbus_error": "The wallbox answers, but not with the expected registers. Firmware too old or wrong unit ID?",
-      "unknown": "Unexpected error",
-      "invalid_ski": "The SKI must be 40 hexadecimal characters.",
-      "not_paired": "The wallbox did not accept the connection yet. Paired? Then try again."
+      "unknown": "Unexpected error"
     },
     "abort": {
       "already_configured": "This wallbox is already configured.",
-      "reconfigure_successful": "Connection updated.",
-      "not_supported": "This EEBUS device is not supported."
-    },
-    "flow_title": "{name}"
+      "reconfigure_successful": "Connection updated."
+    }
   },
   "options": {
     "step": {
@@ -101,9 +62,6 @@
       },
       "problem": {
         "name": "Problem"
-      },
-      "connected": {
-        "name": "EEBUS connected"
       }
     },
     "number": {
@@ -115,15 +73,6 @@
       },
       "watchdog_timeout": {
         "name": "Watchdog timeout"
-      },
-      "power_limit": {
-        "name": "Charging power limit"
-      },
-      "failsafe_power": {
-        "name": "Failsafe power"
-      },
-      "failsafe_duration": {
-        "name": "Failsafe duration"
       }
     },
     "sensor": {
@@ -175,26 +124,11 @@
       },
       "pcb_temperature": {
         "name": "PCB temperature"
-      },
-      "active_power_limit": {
-        "name": "Active power limit"
-      },
-      "operating_state": {
-        "name": "Operating state"
-      },
-      "energy": {
-        "name": "Energy"
-      },
-      "charge_state": {
-        "name": "Charge state"
       }
     },
     "switch": {
       "charging_enabled": {
         "name": "Charging enabled"
-      },
-      "power_limit_active": {
-        "name": "Power limit"
       }
     }
   },
