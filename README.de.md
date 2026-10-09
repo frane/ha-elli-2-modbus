@@ -2,7 +2,7 @@
 
 [English](README.md) | **Deutsch**
 
-> **EEBUS und mehr:** Der Nachfolger [ha-elli](https://github.com/frane/ha-elli) kann Modbus TCP und EEBUS. Diese Integration bleibt reine Modbus-Integration.
+> **EEBUS und mehr:** Der Nachfolger [ha-elli](https://github.com/frane/ha-elli) kann Modbus TCP und EEBUS, mit EEBUS auch die Elli-Wallboxen der ersten Generation. Diese Integration bleibt reine Modbus-Integration.
 
 Lokale Home-Assistant-Integration für **Elli Charger 2** Wallboxen über **Modbus TCP**. Ohne Cloud, ohne EEBUS, und die Elli-App funktioniert weiter.
 
