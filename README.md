@@ -71,7 +71,7 @@ Open the device and set **Failsafe current**. This is what the wallbox does when
 - `0` = stop charging (safe for PV-only charging)
 - `6`–`16` A = keep charging at that current
 
-Keep the polling interval well below the watchdog timeout.
+The wallbox only counts writes, not reads, as Home Assistant talking to it. While the watchdog is on, the integration therefore writes the charging current (or 0 when charging is off) on every poll. Keep the polling interval well below the watchdog timeout.
 
 ## Entities
 
@@ -99,7 +99,7 @@ For PV surplus charging, write an automation that sets *Charging current* and *C
 |---|---|
 | "Cannot connect" during setup | Is the Modbus server on? Is the IP correct? Are Home Assistant and the wallbox on the same network? |
 | "Wallbox answers, but not with the expected registers" | Firmware older than R03.004.045.121, or wrong Modbus ID |
-| Charging stops by itself after a while | Watchdog: Home Assistant was unreachable longer than the watchdog timeout, so the failsafe current applies |
+| Charging stops by itself after a while | Watchdog: Home Assistant was unreachable longer than the watchdog timeout, so the failsafe current applies. Versions before 0.1.1 also tripped it during normal operation; update |
 | Current is lower than set | The wallbox's internal limits (temperature, load management, §14a) have priority; see *Active current limit* |
 
 ## Development

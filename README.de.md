@@ -71,7 +71,7 @@ Im Gerät den **Failsafe-Strom** setzen. Diesen Strom nutzt die Wallbox, wenn Ho
 - `0` = Laden stoppen (sicher für reines PV-Laden)
 - `6`–`16` A = mit diesem Strom weiterladen
 
-Das Abfrageintervall deutlich kürzer als den Watchdog-Timeout halten.
+Die Wallbox zählt nur Schreibzugriffe als Kontakt, keine Lesezugriffe. Solange der Watchdog aktiv ist, schreibt die Integration deshalb bei jeder Abfrage den Ladestrom (oder 0, wenn Laden aus ist). Das Abfrageintervall deutlich kürzer als den Watchdog-Timeout halten.
 
 ## Entitäten
 
@@ -99,7 +99,7 @@ Für PV-Überschussladen eine Automation schreiben, die *Ladestrom* und *Laden f
 |---|---|
 | „Keine Verbindung“ bei der Einrichtung | Ist der Modbus-Server an? Stimmt die IP? Sind Home Assistant und Wallbox im selben Netz? |
 | „Die Wallbox antwortet, aber nicht mit den erwarteten Registern“ | Firmware älter als R03.004.045.121 oder falsche Modbus-ID |
-| Laden stoppt nach einer Weile von selbst | Watchdog: Home Assistant war länger als der Watchdog-Timeout nicht erreichbar, deshalb greift der Failsafe-Strom |
+| Laden stoppt nach einer Weile von selbst | Watchdog: Home Assistant war länger als der Watchdog-Timeout nicht erreichbar, deshalb greift der Failsafe-Strom. Versionen vor 0.1.1 lösten ihn auch im Normalbetrieb aus; aktualisieren |
 | Strom niedriger als eingestellt | Die internen Grenzen der Wallbox (Temperatur, Lastmanagement, §14a) haben Vorrang; siehe *Aktive Stromgrenze* |
 
 ## Entwicklung

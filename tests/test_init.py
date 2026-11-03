@@ -97,13 +97,14 @@ async def test_entities_idle(hass, setup_entry):
 async def test_charging_control(hass, setup_entry, sim):
     wallbox, _ = sim
 
-    # set target while blocked: nothing is written
+    # set target while blocked: no current is released (the watchdog keeps getting 0)
     await hass.services.async_call(
         "number", "set_value",
         {"entity_id": "number.elli_wallbox_charging_current", "value": 10},
         blocking=True,
     )
-    assert wallbox.writes == []
+    assert all(value == 0 for _, value in wallbox.writes)
+    wallbox.writes.clear()
     assert float(_state(hass, "number.elli_wallbox_charging_current")) == 10
 
     # enable charging -> 261 = 100 (10 A)
@@ -112,7 +113,7 @@ async def test_charging_control(hass, setup_entry, sim):
         blocking=True,
     )
     await hass.async_block_till_done()
-    assert wallbox.writes == [(261, 100)]
+    assert set(wallbox.writes) == {(261, 100)}
     assert _state(hass, "switch.elli_wallbox_charging_enabled") == "on"
     assert _state(hass, "sensor.elli_wallbox_charging_state") == "c2"
     assert _state(hass, "binary_sensor.elli_wallbox_charging") == "on"
@@ -179,3 +180,45 @@ async def test_unavailable_when_wallbox_gone(hass, setup_entry, sim):
     await hass.async_block_till_done()
     assert not coordinator.last_update_success
     assert _state(hass, "sensor.elli_wallbox_charging_power") == "unavailable"
+
+
+async def test_polling_feeds_the_watchdog_and_undoes_a_failsafe(hass, setup_entry, sim):
+    """The Elli resets its watchdog on writes only, so every poll writes the wanted current."""
+    wallbox, _ = sim
+    coordinator = setup_entry.runtime_data
+    await hass.services.async_call(
+        "switch", "turn_on", {"entity_id": "switch.elli_wallbox_charging_enabled"},
+        blocking=True,
+    )
+    wallbox.writes.clear()
+    await coordinator.async_refresh()
+    assert wallbox.writes == [(261, 160)], "a poll writes, so the watchdog is fed"
+
+    # The wallbox tripped anyway (say HA was down) and fell back to its failsafe current.
+    wallbox.holding[262] = 60
+    wallbox.holding[261] = 60
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    assert wallbox.holding[261] == 160
+    assert float(_state(hass, "sensor.elli_wallbox_active_current_limit")) == 16
+
+    # With charging switched off, the poll keeps writing 0 rather than reviving it.
+    await hass.services.async_call(
+        "switch", "turn_off", {"entity_id": "switch.elli_wallbox_charging_enabled"},
+        blocking=True,
+    )
+    wallbox.writes.clear()
+    await coordinator.async_refresh()
+    assert wallbox.writes == [(261, 0)]
+
+
+async def test_no_writes_while_the_watchdog_is_off(hass, setup_entry, sim):
+    wallbox, _ = sim
+    await hass.services.async_call(
+        "number", "set_value",
+        {"entity_id": "number.elli_wallbox_watchdog_timeout", "value": 0},
+        blocking=True,
+    )
+    wallbox.writes.clear()
+    await setup_entry.runtime_data.async_refresh()
+    assert wallbox.writes == []
